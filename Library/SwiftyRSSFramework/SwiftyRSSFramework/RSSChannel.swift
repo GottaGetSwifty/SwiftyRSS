@@ -15,17 +15,25 @@ import SWXMLHash
 /// Better documentation [here](https://www.w3schools.com/XML/rss_tag_skipHours.asp)
 /// - There can be up to 24 <hour> elements within the <skipHours> element
 /// - 0 represents midnight.
-struct RSSSkipHours: Codable, XMLIndexerDeserializable {
+public struct RSSSkipHours: Codable, XMLIndexerDeserializable {
     var hour: [Int]
 
-    static func deserialize(_ element: XMLIndexer) throws -> RSSSkipHours {
+    public static func deserialize(_ element: XMLIndexer) throws -> RSSSkipHours {
+
+        let hours: [Int] = element[CodingKeys.hour.stringValue].all.compactMap { try? $0.value() }
+        let invalidHour = hours.first(where: {!(0...23).contains($0)})
+        // 0-23 is only valid input. Fail if wrong
+        guard invalidHour == nil else {
+            print("RSSSkipHours attemped to be initialized hour <0 || >23: \(String(describing: invalidHour)) invalid in \(hours)")
+            throw XMLDeserializationError.nodeIsInvalid(node: element)
+        }
         return RSSSkipHours(hour: element[CodingKeys.hour.stringValue].all.compactMap { try? $0.value() })
     }
 }
 
 //swiftlint:disable identifier_name
 ///Possible values of RSS [skipDays](https://cyber.harvard.edu/rss/skipHoursDays.html#skiphours). Example [here](https://www.w3schools.com/XML/rss_tag_skipDays.asp)
-enum RSSSkipDay: String, Codable {
+public enum RSSSkipDay: String, Codable {
     case Sunday
     case Monday
     case Tuesday
@@ -37,17 +45,17 @@ enum RSSSkipDay: String, Codable {
 //swiftlint:enable identifier_name
 
 /// An XML element that contains up to seven <day> sub-elements whose value is Monday, Tuesday, Wednesday, Thursday, Friday, Saturday or Sunday. Aggregators may not read the channel during days listed in the skipDays element.
-struct RSSSkipDays: Codable, XMLIndexerDeserializable {
+public struct RSSSkipDays: Codable, XMLIndexerDeserializable {
 
     var day: [RSSSkipDay]
 
-    static func deserialize(_ element: XMLIndexer) throws -> RSSSkipDays {
+    public static func deserialize(_ element: XMLIndexer) throws -> RSSSkipDays {
         return RSSSkipDays(day: element[CodingKeys.day.stringValue].all.compactMap { try? RSSSkipDay(rawValue: $0.value()) })
     }
 }
 
 /// An optional sub-element of <channel>, which contains three required and three optional sub-elements.
-struct RSSImage: Codable, XMLElementDeserializable {
+public struct RSSImage: Codable, XMLElementDeserializable {
 
     // Required Elements
 
@@ -71,7 +79,7 @@ struct RSSImage: Codable, XMLElementDeserializable {
     /// contains text that is included in the TITLE attribute of the link formed around the image in the HTML rendering.
     let description: String?
 
-    static func deserialize(_ element: XMLElement) throws -> RSSImage {
+    public static func deserialize(_ element: XMLElement) throws -> RSSImage {
         return RSSImage(url: try element.value(ofAttribute: CodingKeys.url),
                         title: try element.value(ofAttribute: CodingKeys.title),
                         link: try element.value(ofAttribute: CodingKeys.link),
@@ -83,7 +91,7 @@ struct RSSImage: Codable, XMLElementDeserializable {
 
 /// It has one optional attribute, domain,
 /// - Example: `<category>Grateful Dead</category>`, `<category domain="http://www.fool.com/cusips">MSFT</category>`
-struct RSSCategory: Codable, XMLElementDeserializable {
+public struct RSSCategory: Codable, XMLElementDeserializable {
 
     // Required Elements
 
@@ -95,7 +103,7 @@ struct RSSCategory: Codable, XMLElementDeserializable {
     /// A string that identifies a categorization taxonomy.
     let domain: URL?
 
-    static func deserialize(_ element: XMLElement) throws -> RSSCategory {
+    public static func deserialize(_ element: XMLElement) throws -> RSSCategory {
 
         var domain: URL?
         if let domainText = element.attribute(by: CodingKeys.domain.stringValue)?.text {
@@ -109,7 +117,7 @@ struct RSSCategory: Codable, XMLElementDeserializable {
 
 /// A channel may optionally contain a <textInput> sub-element, which contains four required sub-elements.
 /// - The purpose of the <textInput> element is something of a mystery. You can use it to specify a search engine box. Or to allow a reader to provide feedback. Most aggregators ignore it.
-struct RSSTextInput: Codable, XMLElementDeserializable {
+public struct RSSTextInput: Codable, XMLElementDeserializable {
     /// The label of the Submit button in the text input area.
     let title: String
     /// Explains the text input area.
@@ -119,7 +127,7 @@ struct RSSTextInput: Codable, XMLElementDeserializable {
     /// The URL of the CGI script that processes text input requests.
     let link: URL
 
-    static func deserialize(_ element: XMLElement) throws -> RSSTextInput {
+    public static func deserialize(_ element: XMLElement) throws -> RSSTextInput {
         return RSSTextInput(title: try element.value(ofAttribute: CodingKeys.title),
                             description: try element.value(ofAttribute: CodingKeys.description),
                             name: try element.value(ofAttribute: CodingKeys.name),
@@ -127,7 +135,7 @@ struct RSSTextInput: Codable, XMLElementDeserializable {
     }
 }
 
-struct RSSChannel: Codable, XMLIndexerDeserializable {
+public struct RSSChannel: Codable, XMLIndexerDeserializable {
 
     // Required Elements
 
@@ -149,7 +157,7 @@ struct RSSChannel: Codable, XMLIndexerDeserializable {
     let managingEditor: String?
     ///Email address for person responsible for technical issues relating to channel.
     let webMaster: String?
-    /// The publication date for the content in the channel. For example, the New York Times publishes on a daily basis, the publication date flips once every 24 hours. That's when the pubDate of the channel changes. All date-times in RSS conform to the Date and Time Specification of [RFC 822](http://asg.web.cmu.edu/rfc/rfc822.html), with the exception that the year may be expressed with two characters or four characters (four preferred).
+    /// The publication date for the content in the channel. For example, the New York Times publishes on a daily basis, the publication date flips once every 24 hours. That's when the pubDate of the channel changes. All date-times in RSS conform to the Date and Time Specification of [RFC 822](https://www.w3.org/Protocols/rfc822/), with the exception that the year may be expressed with two characters or four characters (four preferred).
     /// - Example: Sat, 07 Sep 2002 00:00:01 GMT
     let pubDate: Date?
     /// The last time the content of the channel changed.
@@ -178,7 +186,7 @@ struct RSSChannel: Codable, XMLIndexerDeserializable {
     /// A hint for aggregators telling them which days they can skip. More info [here](https://cyber.harvard.edu/rss/skipHoursDays.html#skipdays).
     let skipDays: RSSSkipDays?
 
-    static func deserialize(_ element: XMLIndexer) throws -> RSSChannel {
+    public static func deserialize(_ element: XMLIndexer) throws -> RSSChannel {
 
         return RSSChannel(title: try element[CodingKeys.title.stringValue].value(),
                           link: try element[CodingKeys.link.stringValue].value(),
@@ -202,6 +210,7 @@ struct RSSChannel: Codable, XMLIndexerDeserializable {
     }
 }
 
+/// URL XML deserialization for URLs
 extension URL: XMLElementDeserializable, XMLAttributeDeserializable {
 
     public static func deserialize(_ element: XMLElement) throws -> URL {
@@ -224,6 +233,8 @@ private let standardDateFormatter: DateFormatter = {
     formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
     return formatter
 }()
+
+/// Date XML deserialization using the standardDateFormatter (using [RFC822](https://www.w3.org/Protocols/rfc822/)
 extension Date: XMLElementDeserializable, XMLAttributeDeserializable {
 
     public static func deserialize(_ element: XMLElement) throws -> Date {
@@ -241,6 +252,7 @@ extension Date: XMLElementDeserializable, XMLAttributeDeserializable {
     }
 }
 
+/// Allows interaction using CodingKeys
 fileprivate extension XMLElement {
 
     func value<T: XMLAttributeDeserializable, A: CodingKey>(ofAttribute attr: A) throws -> T {

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		92D0EDD52253DF2E00899413 /* RSSChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D0EDD42253DF2E00899413 /* RSSChannelTests.swift */; };
+		92D0EDD72253E7B900899413 /* XMLTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D0EDD62253E7B900899413 /* XMLTestHelper.swift */; };
 		92D912072253B972002D880B /* SwiftyRSSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92D911FD2253B972002D880B /* SwiftyRSSFramework.framework */; };
 		92D9120C2253B972002D880B /* SwiftyRSSFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9120B2253B972002D880B /* SwiftyRSSFrameworkTests.swift */; };
 		92D9120E2253B972002D880B /* SwiftyRSSFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 92D912002253B972002D880B /* SwiftyRSSFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -29,6 +31,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		92D0EDD42253DF2E00899413 /* RSSChannelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSChannelTests.swift; sourceTree = "<group>"; };
+		92D0EDD62253E7B900899413 /* XMLTestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLTestHelper.swift; sourceTree = "<group>"; };
 		92D911FD2253B972002D880B /* SwiftyRSSFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftyRSSFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		92D912002253B972002D880B /* SwiftyRSSFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftyRSSFramework.h; sourceTree = "<group>"; };
 		92D912012253B972002D880B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -100,7 +104,9 @@
 			isa = PBXGroup;
 			children = (
 				92D9120B2253B972002D880B /* SwiftyRSSFrameworkTests.swift */,
+				92D0EDD42253DF2E00899413 /* RSSChannelTests.swift */,
 				92D9120D2253B972002D880B /* Info.plist */,
+				92D0EDD62253E7B900899413 /* XMLTestHelper.swift */,
 			);
 			path = SwiftyRSSFrameworkTests;
 			sourceTree = "<group>";
@@ -255,6 +261,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92D0EDD72253E7B900899413 /* XMLTestHelper.swift in Sources */,
+				92D0EDD52253DF2E00899413 /* RSSChannelTests.swift in Sources */,
 				92D9120C2253B972002D880B /* SwiftyRSSFrameworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
