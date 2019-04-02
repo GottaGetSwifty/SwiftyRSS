@@ -1,0 +1,6 @@
+[submodule "Library/Submodules/SWXMLHash"]
+	path = Library/Submodules/SWXMLHash
+	url = ../../drmohundro/SWXMLHash.git
+[submodule "Library/Submodules/Quick"]
+	path = Library/Submodules/Quick
+	url = ../../Quick/Quick.git
