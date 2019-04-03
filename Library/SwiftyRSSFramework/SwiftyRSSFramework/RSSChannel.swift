@@ -15,7 +15,7 @@ import SWXMLHash
 /// Better documentation [here](https://www.w3schools.com/XML/rss_tag_skipHours.asp)
 /// - There can be up to 24 <hour> elements within the <skipHours> element
 /// - 0 represents midnight.
-public struct RSSSkipHours: Codable, XMLIndexerDeserializable {
+public struct RSSSkipHours: Equatable, Codable, XMLIndexerDeserializable {
     var hour: [Int]
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSSkipHours {
@@ -33,7 +33,7 @@ public struct RSSSkipHours: Codable, XMLIndexerDeserializable {
 
 //swiftlint:disable identifier_name
 ///Possible values of RSS [skipDays](https://cyber.harvard.edu/rss/skipHoursDays.html#skiphours). Example [here](https://www.w3schools.com/XML/rss_tag_skipDays.asp)
-public enum RSSSkipDay: String, Codable {
+public enum RSSSkipDay: String, Codable, CaseIterable {
     case Sunday
     case Monday
     case Tuesday
@@ -50,7 +50,13 @@ public struct RSSSkipDays: Codable, XMLIndexerDeserializable {
     var day: [RSSSkipDay]
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSSkipDays {
-        return RSSSkipDays(day: element[CodingKeys.day.stringValue].all.compactMap { try? RSSSkipDay(rawValue: $0.value()) })
+        return RSSSkipDays(day: element[CodingKeys.day.stringValue].all.compactMap {
+            guard  let skipDay = try? RSSSkipDay(rawValue: $0.value()) else {
+                print("Invalid skip day: \($0.description)")
+                return nil
+            }
+            return skipDay
+        })
     }
 }
 

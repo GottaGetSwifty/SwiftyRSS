@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		92AF8D85225540AA00A46540 /* RSSSkipHoursTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AF8D84225540AA00A46540 /* RSSSkipHoursTests.swift */; };
+		92AF8D87225541FC00A46540 /* RSSSkipDaysTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AF8D86225541FC00A46540 /* RSSSkipDaysTests.swift */; };
+		92AF8D89225547F200A46540 /* RSSSkipHoursTests2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AF8D88225547F200A46540 /* RSSSkipHoursTests2.swift */; };
 		92D0EDD52253DF2E00899413 /* RSSChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D0EDD42253DF2E00899413 /* RSSChannelTests.swift */; };
 		92D0EDD72253E7B900899413 /* XMLTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D0EDD62253E7B900899413 /* XMLTestHelper.swift */; };
 		92D912072253B972002D880B /* SwiftyRSSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92D911FD2253B972002D880B /* SwiftyRSSFramework.framework */; };
@@ -31,6 +34,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		92AF8D84225540AA00A46540 /* RSSSkipHoursTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSSkipHoursTests.swift; sourceTree = "<group>"; };
+		92AF8D86225541FC00A46540 /* RSSSkipDaysTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSSkipDaysTests.swift; sourceTree = "<group>"; };
+		92AF8D88225547F200A46540 /* RSSSkipHoursTests2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSSkipHoursTests2.swift; sourceTree = "<group>"; };
 		92D0EDD42253DF2E00899413 /* RSSChannelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSChannelTests.swift; sourceTree = "<group>"; };
 		92D0EDD62253E7B900899413 /* XMLTestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLTestHelper.swift; sourceTree = "<group>"; };
 		92D911FD2253B972002D880B /* SwiftyRSSFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftyRSSFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -70,6 +76,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		92AF8D832255409700A46540 /* ModelTests */ = {
+			isa = PBXGroup;
+			children = (
+				92D0EDD42253DF2E00899413 /* RSSChannelTests.swift */,
+				92AF8D84225540AA00A46540 /* RSSSkipHoursTests.swift */,
+				92AF8D88225547F200A46540 /* RSSSkipHoursTests2.swift */,
+				92AF8D86225541FC00A46540 /* RSSSkipDaysTests.swift */,
+			);
+			path = ModelTests;
+			sourceTree = "<group>";
+		};
 		92D911F32253B972002D880B = {
 			isa = PBXGroup;
 			children = (
@@ -103,8 +120,8 @@
 		92D9120A2253B972002D880B /* SwiftyRSSFrameworkTests */ = {
 			isa = PBXGroup;
 			children = (
+				92AF8D832255409700A46540 /* ModelTests */,
 				92D9120B2253B972002D880B /* SwiftyRSSFrameworkTests.swift */,
-				92D0EDD42253DF2E00899413 /* RSSChannelTests.swift */,
 				92D9120D2253B972002D880B /* Info.plist */,
 				92D0EDD62253E7B900899413 /* XMLTestHelper.swift */,
 			);
@@ -261,6 +278,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92AF8D85225540AA00A46540 /* RSSSkipHoursTests.swift in Sources */,
+				92AF8D87225541FC00A46540 /* RSSSkipDaysTests.swift in Sources */,
+				92AF8D89225547F200A46540 /* RSSSkipHoursTests2.swift in Sources */,
 				92D0EDD72253E7B900899413 /* XMLTestHelper.swift in Sources */,
 				92D0EDD52253DF2E00899413 /* RSSChannelTests.swift in Sources */,
 				92D9120C2253B972002D880B /* SwiftyRSSFrameworkTests.swift in Sources */,
