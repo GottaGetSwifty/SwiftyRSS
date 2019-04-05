@@ -20,26 +20,26 @@ class RSSSkipDaysTests: QuickSpec {
         describe("Deserialization") {
 
             it("FullItem") {
-                if let fullItem: RSSSkipDays = XMLTestHelper.testParse(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.fullTestXML),
+                if let fullItem: RSSSkipDays = XMLTestHelper.testParseSucceeds(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.fullTestXML),
                                                                         using: RSSSkipDays.elementName) {
                     expect(fullItem.day) == RSSSkipDays.availableDays
                 }
             }
             it("SingleItem") {
-                if let fullItem: RSSSkipDays = XMLTestHelper.testParse(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.singleTestXML),
+                if let fullItem: RSSSkipDays = XMLTestHelper.testParseSucceeds(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.singleTestXML),
                                                                         using: RSSSkipDays.elementName) {
                     expect(fullItem.day) == [.Sunday]
                 }
             }
             it("EmptyItem") {
-                if let emptyItem: RSSSkipDays = XMLTestHelper.testParse(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.emptyTestXML),
+                if let emptyItem: RSSSkipDays = XMLTestHelper.testParseSucceeds(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.emptyTestXML),
                                                                         using: RSSSkipDays.elementName) {
                     expect(emptyItem.day.count) == 0
                 }
             }
             describe("Has invalid input") {
                 it("Ignores Invlid Items") {
-                    if let fullItem: RSSSkipDays = XMLTestHelper.testParse(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.extraTestXML),
+                    if let fullItem: RSSSkipDays = XMLTestHelper.testParseSucceeds(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.extraTestXML),
                                                                            using: RSSSkipDays.elementName) {
                         expect(fullItem.day) == RSSSkipDays.availableDays
                     }

@@ -16,18 +16,29 @@ import SWXMLHash
 /// - There can be up to 24 <hour> elements within the <skipHours> element
 /// - 0 represents midnight.
 public struct RSSSkipHours: Equatable, Codable, XMLIndexerDeserializable {
+    private static let validValues = Set(0...23)
+
     var hour: [Int]
 
-    public static func deserialize(_ element: XMLIndexer) throws -> RSSSkipHours {
-
-        let hours: [Int] = element[CodingKeys.hour.stringValue].all.compactMap { try? $0.value() }
-        let invalidHour = hours.first(where: {!(0...23).contains($0)})
-        // 0-23 is only valid input. Fail if wrong
-        guard invalidHour == nil else {
-            print("RSSSkipHours attemped to be initialized hour <0 || >23: \(String(describing: invalidHour)) invalid in \(hours)")
-            throw XMLDeserializationError.nodeIsInvalid(node: element)
+    init(hour: [Int]) throws {
+        guard Set(hour).subtracting(RSSSkipHours.validValues).isEmpty else {
+            throw RSSSkipHoursError.invalidHour(hour)
         }
-        return RSSSkipHours(hour: element[CodingKeys.hour.stringValue].all.compactMap { try? $0.value() })
+        self.hour = hour
+    }
+
+    public static func deserialize(_ element: XMLIndexer) throws -> RSSSkipHours {
+        return try RSSSkipHours(hour: element[CodingKeys.hour.stringValue].all.compactMap { try? $0.value() })
+    }
+
+    enum RSSSkipHoursError: Error, CustomStringConvertible {
+        case invalidHour([Int])
+
+        var description: String {
+            switch self {
+            case .invalidHour(let hour): return "Initialized with invalid hour: \(hour)"
+            }
+        }
     }
 }
 

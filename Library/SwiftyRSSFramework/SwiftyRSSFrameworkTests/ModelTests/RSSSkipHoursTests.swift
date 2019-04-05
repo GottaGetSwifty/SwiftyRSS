@@ -1,6 +1,5 @@
 //
-//  SwiftyRSSFrameworkTests.swift
-//  SwiftyRSSFrameworkTests
+//  RSSSkipHoursTests.swift
 //
 //  Created by Paul Fechner on 4/2/19.
 //  Copyright © 2019 PeeJWeeJ. All rights reserved.
@@ -12,125 +11,120 @@ import SWXMLHash
 
 @testable import SwiftyRSSFramework
 
-//swiftlint:disable line_length
+private let config = SWXMLHash.config { (_) in }
+private let elementName = "skipHours"
+
 class RSSSkipHoursTests: QuickSpec {
 
     override func spec() {
 
         describe("Deserialization") {
 
-            it("FullItem") {
-                if let fullItem: RSSSkipHours = XMLTestHelper.testParse(with: XMLTestHelper.parseIntoIndexer(RSSSkipHours.fullTestXML),
-                                                                        using: RSSSkipHours.elementName) {
-                    expect(fullItem.hour) == RSSSkipHours.availableHours
+            context("WithFullItem") {
+
+                let xmlIndexer = config.parse(fullTestXML)[elementName]
+                it("Succeeds") {
+                    expect { try xmlIndexer.value() as RSSSkipHours }.toNot(throwError())
+                }
+                it("IsCorrect") {
+                    expect((try? xmlIndexer.value() as RSSSkipHours)?.hour) == Array(0...23)
                 }
             }
-            it("SingleItem") {
-                if let fullItem: RSSSkipHours = XMLTestHelper.testParse(with: XMLTestHelper.parseIntoIndexer(RSSSkipHours.singleTestXML),
-                                                                        using: RSSSkipHours.elementName) {
-                    expect(fullItem.hour) == [1]
+            context("WithEmptyItem") {
+
+                let xmlIndexer = config.parse(emptyTestXML)[elementName]
+                it("Succeeds") {
+                    expect { try xmlIndexer.value() as RSSSkipHours }.toNot(throwError())
+                }
+                it("IsCorrect") {
+                    expect((try? xmlIndexer.value() as RSSSkipHours)?.hour) == []
                 }
             }
-            it("EmptyItem") {
-                if let emptyItem: RSSSkipHours = XMLTestHelper.testParse(with: XMLTestHelper.parseIntoIndexer(RSSSkipHours.emptyTestXML),
-                                                                        using: RSSSkipHours.elementName) {
-                    expect(emptyItem.hour.count) == 0
+            context("WithNoInput") {
+                it("Fails") {
+                    expect {try config.parse("")[elementName].value() as RSSSkipHours }.to(throwError())
                 }
             }
-            describe("Fails") {
-                it("Has invalid input") {
-                    XMLTestHelper.testParseFailure(with: XMLTestHelper.parseIntoIndexer(RSSSkipHours.extraTestXML),
-                                                   of: RSSSkipHours.self, using: RSSSkipHours.elementName)
+        }
+
+        describe("Initialization") {
+
+            context("WithValidInput") {
+                it("Succeeds") {
+                    expect { try RSSSkipHours(hour: Array(0...23)) }.toNot(throwError())
+                    expect { try RSSSkipHours(hour: []) }.toNot(throwError())
+                    expect { try RSSSkipHours(hour: []) }.toNot(throwError())
                 }
-                it("Has no input") {
-                    XMLTestHelper.testParseFailure(with: XMLTestHelper.parseIntoIndexer(""),
-                                                   of: RSSSkipHours.self, using: RSSSkipHours.elementName)
+                it("Matches") {
+                    expect(try? RSSSkipHours(hour: Array(0...23)).hour) == Array(0...23)
+                    expect(try? RSSSkipHours(hour: [1]).hour) == [1]
+                    expect(try? RSSSkipHours(hour: []).hour) == []
+                }
+            }
+
+            context("WithInvalidInput") {
+                it("Fails") {
+                    expect { try RSSSkipHours(hour: Array(0...24)) }.to(throwError())
+                    expect { try RSSSkipHours(hour: Array(-5...5)) }.to(throwError())
                 }
             }
         }
     }
 }
 
-//swiftlint:enable line_length
+private let fullTestXML = """
+    <skipHours>
+        <hour>0</hour>
+        <hour>1</hour>
+        <hour>2</hour>
+        <hour>3</hour>
+        <hour>4</hour>
+        <hour>5</hour>
+        <hour>6</hour>
+        <hour>7</hour>
+        <hour>8</hour>
+        <hour>9</hour>
+        <hour>10</hour>
+        <hour>11</hour>
+        <hour>12</hour>
+        <hour>13</hour>
+        <hour>14</hour>
+        <hour>15</hour>
+        <hour>16</hour>
+        <hour>17</hour>
+        <hour>18</hour>
+        <hour>19</hour>
+        <hour>20</hour>
+        <hour>21</hour>
+        <hour>22</hour>
+        <hour>23</hour>
+    </skipHours>
+    """
 
-//private extension RSSSkipHours {
-//
-//    static var elementName: String {
-//        return "skipHours"
-//    }
-//
-//    static var fullTestXML: String {
-//        return """
-//        <skipHours>
-//            <hour>0</hour>
-//            <hour>1</hour>
-//            <hour>2</hour>
-//            <hour>3</hour>
-//            <hour>4</hour>
-//            <hour>5</hour>
-//            <hour>6</hour>
-//            <hour>7</hour>
-//            <hour>8</hour>
-//            <hour>9</hour>
-//            <hour>10</hour>
-//            <hour>11</hour>
-//            <hour>12</hour>
-//            <hour>13</hour>
-//            <hour>14</hour>
-//            <hour>15</hour>
-//            <hour>16</hour>
-//            <hour>17</hour>
-//            <hour>18</hour>
-//            <hour>19</hour>
-//            <hour>20</hour>
-//            <hour>21</hour>
-//            <hour>22</hour>
-//            <hour>23</hour>
-//        </skipHours>
-//        """
-//    }
-//
-//    static var singleTestXML: String {
-//        return """
-//        <skipHours>
-//            <hour>1</hour>
-//        </skipHours>
-//        """
-//    }
-//
-//    static var extraTestXML: String {
-//        return """
-//        <skipHours>
-//            <hour>0</hour>
-//            <hour>1</hour>
-//            <hour>2</hour>
-//            <hour>3</hour>
-//            <hour>4</hour>
-//            <hour>5</hour>
-//            <hour>13</hour>
-//            <hour>14</hour>
-//            <hour>15</hour>
-//            <hour>16</hour>
-//            <hour>17</hour>
-//            <hour>18</hour>
-//            <hour>19</hour>
-//            <hour>20</hour>
-//            <hour>21</hour>
-//            <hour>22</hour>
-//            <hour>23</hour>
-//            <hour>24</hour>
-//        </skipHours>
-//        """
-//    }
-//
-//    static var emptyTestXML: String {
-//        return """
-//        <skipHours>
-//        </skipHours>
-//        """
-//    }
-//
-//    static var availableHours: [Int] {
-//        return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-//    }
-//}
+private let extraTestXML = """
+    <skipHours>
+        <hour>0</hour>
+        <hour>1</hour>
+        <hour>2</hour>
+        <hour>3</hour>
+        <hour>4</hour>
+        <hour>5</hour>
+        <hour>13</hour>
+        <hour>14</hour>
+        <hour>15</hour>
+        <hour>16</hour>
+        <hour>17</hour>
+        <hour>18</hour>
+        <hour>19</hour>
+        <hour>20</hour>
+        <hour>21</hour>
+        <hour>22</hour>
+        <hour>23</hour>
+        <hour>24</hour>
+    </skipHours>
+    """
+
+private let emptyTestXML = """
+    <skipHours>
+    </skipHours>
+    """

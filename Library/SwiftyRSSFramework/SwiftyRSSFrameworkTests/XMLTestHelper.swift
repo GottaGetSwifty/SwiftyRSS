@@ -22,12 +22,12 @@ class XMLTestHelper {
         return indexer
     }
 
-    static func testParse<T: XMLIndexerDeserializable>(with indexer: XMLIndexer, using key: String) -> T? {
+    static func testParseSucceeds<T: XMLIndexerDeserializable>(with indexer: XMLIndexer, using key: String) -> T? {
         let failureMessage = "Could not parse \(T.self). Additional tests will be skipped"
-        expect(try {
+        expect {
             let thing: T = try indexer[key].value()
             return thing
-            }()).toNot(throwError(), description: failureMessage)
+            }.toNot(throwError(), description: failureMessage)
         return try? indexer[key].value()
     }
 
@@ -35,10 +35,10 @@ class XMLTestHelper {
                                                               of type: T.Type,
                                                               using key: String) {
         let failureMessage = "Parsed invalid data of Type \(T.self)"
-        expect(try {
+        expect {
             let thing: T = try indexer[key].value()
             return thing
-            }()).to(throwError(), description: failureMessage)
+            }.to(throwError(), description: failureMessage)
 
     }
 }
