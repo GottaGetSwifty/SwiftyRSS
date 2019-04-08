@@ -12,43 +12,64 @@ import SWXMLHash
 
 @testable import SwiftyRSSFramework
 
+// Putting these outside of the class so it's not necessary to use `self`
+private let config = SWXMLHash.config { (_) in }
+private let elementName = "skipDays"
+
 //swiftlint:disable line_length
 class RSSSkipDaysTests: QuickSpec {
 
     override func spec() {
-
         describe("Deserialization") {
 
-            it("FullItem") {
-                if let fullItem: RSSSkipDays = XMLTestHelper.testParseSucceeds(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.fullTestXML),
-                                                                        using: RSSSkipDays.elementName) {
-                    expect(fullItem.day) == RSSSkipDays.availableDays
+            context("WithFullItem") {
+
+                let xmlIndexer = config.parse(fullTestXML)[elementName]
+                it("Succeeds") {
+                    expect { try xmlIndexer.value() as RSSSkipDays }.toNot(throwError())
+                }
+                it("IsCorrect") {
+                    expect((try? xmlIndexer.value() as RSSSkipDays)?.day) == Set(RSSSkipDay.allCases)
                 }
             }
-            it("SingleItem") {
-                if let fullItem: RSSSkipDays = XMLTestHelper.testParseSucceeds(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.singleTestXML),
-                                                                        using: RSSSkipDays.elementName) {
-                    expect(fullItem.day) == [.Sunday]
+
+            context("SingleItem") {
+
+                let xmlIndexer = config.parse(singleTestXML)[elementName]
+                it("Succeeds") {
+                    expect { try xmlIndexer.value() as RSSSkipDays }.toNot(throwError())
+                }
+                it("IsCorrect") {
+                    expect((try? xmlIndexer.value() as RSSSkipDays)?.day) == [.Sunday]
                 }
             }
-            it("EmptyItem") {
-                if let emptyItem: RSSSkipDays = XMLTestHelper.testParseSucceeds(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.emptyTestXML),
-                                                                        using: RSSSkipDays.elementName) {
-                    expect(emptyItem.day.count) == 0
+
+            context("EmptyItem") {
+
+                let xmlIndexer = config.parse(emptyTestXML)[elementName]
+                it("Succeeds") {
+                    expect { try xmlIndexer.value() as RSSSkipDays }.toNot(throwError())
+                }
+                it("IsCorrect") {
+                    expect((try? xmlIndexer.value() as RSSSkipDays)?.day.count) == 0
                 }
             }
-            describe("Has invalid input") {
-                it("Ignores Invlid Items") {
-                    if let fullItem: RSSSkipDays = XMLTestHelper.testParseSucceeds(with: XMLTestHelper.parseIntoIndexer(RSSSkipDays.extraTestXML),
-                                                                           using: RSSSkipDays.elementName) {
-                        expect(fullItem.day) == RSSSkipDays.availableDays
+
+            describe("HasInvalidInput") {
+                context("InvalidItems") {
+                    let xmlIndexer = config.parse(extraItemTestXML)[elementName]
+                    it("Succeeds") {
+                        expect { try xmlIndexer.value() as RSSSkipDays }.toNot(throwError())
+                    }
+                    it("IsCorrect") {
+                        expect((try? xmlIndexer.value() as RSSSkipDays)?.day) == Set(RSSSkipDay.allCases)
                     }
                 }
-            }
-            describe("Fails") {
-                it("Has no input") {
-                    XMLTestHelper.testParseFailure(with: XMLTestHelper.parseIntoIndexer(""),
-                                                   of: RSSSkipHours.self, using: RSSSkipDays.elementName)
+                context("NotInput") {
+                    it("Fails") {
+                        let xmlIndexer = config.parse("")[elementName]
+                        expect { try xmlIndexer.value() as RSSSkipDays }.to(throwError())
+                    }
                 }
             }
         }
@@ -57,57 +78,38 @@ class RSSSkipDaysTests: QuickSpec {
 
 //swiftlint:enable line_length
 
-private extension RSSSkipDays {
+private let fullTestXML = """
+    <skipDays>
+        <day>Sunday</day>
+        <day>Monday</day>
+        <day>Tuesday</day>
+        <day>Wednesday</day>
+        <day>Thursday</day>
+        <day>Friday</day>
+        <day>Saturday</day>
+    </skipDays>
+    """
 
-    static var elementName: String {
-        return "skipDays"
-    }
+private let singleTestXML = """
+    <skipDays>
+        <day>Sunday</day>
+    </skipDays>
+    """
 
-    static var fullTestXML: String {
-        return """
-        <skipDays>
-            <day>Sunday</day>
-            <day>Monday</day>
-            <day>Tuesday</day>
-            <day>Wednesday</day>
-            <day>Thursday</day>
-            <day>Friday</day>
-            <day>Saturday</day>
-        </skipDays>
-        """
-    }
+private let extraItemTestXML = """
+    <skipDays>
+        <day>Sunday</day>
+        <day>Monday</day>
+        <day>Tuesday</day>
+        <day>Wednesday</day>
+        <day>Thursday</day>
+        <day>Friday</day>
+        <day>Saturday</day>
+        <day>FakeDay</day>
+    </skipDays>
+    """
 
-    static var singleTestXML: String {
-        return """
-        <skipDays>
-            <day>Sunday</day>
-        </skipDays>
-        """
-    }
-
-    static var extraTestXML: String {
-        return """
-        <skipDays>
-            <day>Sunday</day>
-            <day>Monday</day>
-            <day>Tuesday</day>
-            <day>Wednesday</day>
-            <day>Thursday</day>
-            <day>Friday</day>
-            <day>Saturday</day>
-            <day>FakeDay</day>
-        </skipDays>
-        """
-    }
-
-    static var emptyTestXML: String {
-        return """
-        <skipDays>
-        </skipDays>
-        """
-    }
-
-    static var availableDays: [RSSSkipDay] {
-        return RSSSkipDay.allCases
-    }
-}
+private let emptyTestXML = """
+    <skipDays>
+    </skipDays>
+    """

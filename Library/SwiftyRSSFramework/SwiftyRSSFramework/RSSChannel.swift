@@ -20,6 +20,7 @@ public struct RSSSkipHours: Equatable, Codable, XMLIndexerDeserializable {
 
     var hour: [Int]
 
+    /// Throwing initializer to ensure it's not initialized with invalid values
     init(hour: [Int]) throws {
         guard Set(hour).subtracting(RSSSkipHours.validValues).isEmpty else {
             throw RSSSkipHoursError.invalidHour(hour)
@@ -56,23 +57,23 @@ public enum RSSSkipDay: String, Codable, CaseIterable {
 //swiftlint:enable identifier_name
 
 /// An XML element that contains up to seven <day> sub-elements whose value is Monday, Tuesday, Wednesday, Thursday, Friday, Saturday or Sunday. Aggregators may not read the channel during days listed in the skipDays element.
-public struct RSSSkipDays: Codable, XMLIndexerDeserializable {
+public struct RSSSkipDays: Codable, Equatable, XMLIndexerDeserializable {
 
-    var day: [RSSSkipDay]
+    var day: Set<RSSSkipDay>
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSSkipDays {
-        return RSSSkipDays(day: element[CodingKeys.day.stringValue].all.compactMap {
+        return RSSSkipDays(day: Set(element[CodingKeys.day.stringValue].all.compactMap {
             guard  let skipDay = try? RSSSkipDay(rawValue: $0.value()) else {
                 print("Invalid skip day: \($0.description)")
                 return nil
             }
             return skipDay
-        })
+        }))
     }
 }
 
 /// An optional sub-element of <channel>, which contains three required and three optional sub-elements.
-public struct RSSImage: Codable, XMLElementDeserializable {
+public struct RSSImage: Codable, Equatable, XMLIndexerDeserializable {
 
     // Required Elements
 
@@ -96,19 +97,19 @@ public struct RSSImage: Codable, XMLElementDeserializable {
     /// contains text that is included in the TITLE attribute of the link formed around the image in the HTML rendering.
     let description: String?
 
-    public static func deserialize(_ element: XMLElement) throws -> RSSImage {
-        return RSSImage(url: try element.value(ofAttribute: CodingKeys.url),
-                        title: try element.value(ofAttribute: CodingKeys.title),
-                        link: try element.value(ofAttribute: CodingKeys.link),
-                        width: element.value(ofAttribute: CodingKeys.width),
-                        height: element.value(ofAttribute: CodingKeys.height),
-                        description: element.value(ofAttribute: CodingKeys.description))
+    public static func deserialize(_ element: XMLIndexer) throws -> RSSImage {
+        return RSSImage(url: try element[CodingKeys.url.stringValue].value(),
+                        title: try element[CodingKeys.title.stringValue].value(),
+                        link: try element[CodingKeys.link.stringValue].value(),
+                        width: try? element[CodingKeys.width.stringValue].value(),
+                        height: try? element[CodingKeys.height.stringValue].value(),
+                        description: try? element[CodingKeys.description.stringValue].value())
     }
 }
 
 /// It has one optional attribute, domain,
 /// - Example: `<category>Grateful Dead</category>`, `<category domain="http://www.fool.com/cusips">MSFT</category>`
-public struct RSSCategory: Codable, XMLElementDeserializable {
+public struct RSSCategory: Codable, Equatable, XMLElementDeserializable {
 
     // Required Elements
 
@@ -120,21 +121,35 @@ public struct RSSCategory: Codable, XMLElementDeserializable {
     /// A string that identifies a categorization taxonomy.
     let domain: URL?
 
+    /// Throwing initializer to ensure it's not initialized without a value
+    init(value: String, domain: URL?) throws {
+        guard !value.isEmpty else {
+            throw RSSSkipHoursError.missingValue
+        }
+        self.value = value
+        self.domain = domain
+    }
+
     public static func deserialize(_ element: XMLElement) throws -> RSSCategory {
 
-        var domain: URL?
-        if let domainText = element.attribute(by: CodingKeys.domain.stringValue)?.text {
-            domain = URL(string: domainText)
-        }
+        return try RSSCategory(value: element.text,
+                               domain: element.value(ofAttribute: CodingKeys.domain))
+    }
 
-        return RSSCategory(value: try element.value(ofAttribute: CodingKeys.value),
-                           domain: domain)
+    enum RSSSkipHoursError: Error, CustomStringConvertible {
+        case missingValue
+
+        var description: String {
+            switch self {
+            case .missingValue: return "Initialized with an empty value"
+            }
+        }
     }
 }
 
 /// A channel may optionally contain a <textInput> sub-element, which contains four required sub-elements.
 /// - The purpose of the <textInput> element is something of a mystery. You can use it to specify a search engine box. Or to allow a reader to provide feedback. Most aggregators ignore it.
-public struct RSSTextInput: Codable, XMLElementDeserializable {
+public struct RSSTextInput: Codable, Equatable, XMLIndexerDeserializable {
     /// The label of the Submit button in the text input area.
     let title: String
     /// Explains the text input area.
@@ -144,15 +159,15 @@ public struct RSSTextInput: Codable, XMLElementDeserializable {
     /// The URL of the CGI script that processes text input requests.
     let link: URL
 
-    public static func deserialize(_ element: XMLElement) throws -> RSSTextInput {
-        return RSSTextInput(title: try element.value(ofAttribute: CodingKeys.title),
-                            description: try element.value(ofAttribute: CodingKeys.description),
-                            name: try element.value(ofAttribute: CodingKeys.name),
-                            link: try element.value(ofAttribute: CodingKeys.link))
+    public static func deserialize(_ element: XMLIndexer) throws -> RSSTextInput {
+        return RSSTextInput(title: try element[CodingKeys.title.stringValue].value(),
+                            description: try element[CodingKeys.description.stringValue].value(),
+                            name: try element[CodingKeys.name.stringValue].value(),
+                            link: try element[CodingKeys.link.stringValue].value())
     }
 }
 
-public struct RSSChannel: Codable, XMLIndexerDeserializable {
+public struct RSSChannel: Codable, Equatable, XMLIndexerDeserializable {
 
     // Required Elements
 
@@ -224,60 +239,6 @@ public struct RSSChannel: Codable, XMLIndexerDeserializable {
                           textInput: try? element[CodingKeys.textInput.stringValue].value(),
                           skipHours: try? element[CodingKeys.skipHours.stringValue].value(),
                           skipDays: try? element[CodingKeys.skipDays.stringValue].value())
-    }
-}
-
-/// URL XML deserialization for URLs
-extension URL: XMLElementDeserializable, XMLAttributeDeserializable {
-
-    public static func deserialize(_ element: XMLElement) throws -> URL {
-        guard let url = URL(string: element.text) else {
-            throw XMLDeserializationError.typeConversionFailed(type: "URL", element: element)
-        }
-        return url
-    }
-
-    public static func deserialize(_ attribute: XMLAttribute) throws -> URL {
-        guard let url = URL(string: attribute.text) else {
-            throw XMLDeserializationError.attributeDeserializationFailed(type: "URL", attribute: attribute)
-        }
-        return url
-    }
-}
-
-private let standardDateFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
-    return formatter
-}()
-
-/// Date XML deserialization using the standardDateFormatter (using [RFC822](https://www.w3.org/Protocols/rfc822/)
-extension Date: XMLElementDeserializable, XMLAttributeDeserializable {
-
-    public static func deserialize(_ element: XMLElement) throws -> Date {
-        guard let date = standardDateFormatter.date(from: element.text) else {
-            throw XMLDeserializationError.typeConversionFailed(type: "Date", element: element)
-        }
-        return date
-    }
-
-    public static func deserialize(_ attribute: XMLAttribute) throws -> Date {
-        guard let date = standardDateFormatter.date(from: attribute.text) else {
-            throw XMLDeserializationError.attributeDeserializationFailed(type: "Date", attribute: attribute)
-        }
-        return date
-    }
-}
-
-/// Allows interaction using CodingKeys
-fileprivate extension XMLElement {
-
-    func value<T: XMLAttributeDeserializable, A: CodingKey>(ofAttribute attr: A) throws -> T {
-        return try value(ofAttribute: attr.stringValue)
-    }
-
-    func value<T: XMLAttributeDeserializable, A: CodingKey>(ofAttribute attr: A) -> T? {
-        return value(ofAttribute: attr.stringValue)
     }
 }
 

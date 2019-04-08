@@ -11,6 +11,7 @@ import SWXMLHash
 
 @testable import SwiftyRSSFramework
 
+// Putting these outside of the class so it's not necessary to use `self`
 private let config = SWXMLHash.config { (_) in }
 private let elementName = "skipHours"
 
@@ -18,6 +19,29 @@ class RSSSkipHoursTests: QuickSpec {
 
     override func spec() {
 
+        describe("Initialization") {
+
+            context("WithValidInput") {
+                it("Succeeds") {
+                    expect { try RSSSkipHours(hour: Array(0...23)) }.toNot(throwError())
+                    expect { try RSSSkipHours(hour: []) }.toNot(throwError())
+                    expect { try RSSSkipHours(hour: []) }.toNot(throwError())
+                }
+                it("Matches") {
+                    expect(try? RSSSkipHours(hour: Array(0...23)).hour) == Array(0...23)
+                    expect(try? RSSSkipHours(hour: [1]).hour) == [1]
+                    expect(try? RSSSkipHours(hour: []).hour) == []
+                }
+            }
+
+            context("WithInvalidInput") {
+                it("Fails") {
+                    expect { try RSSSkipHours(hour: Array(0...24)) }.to(throwError())
+                    expect { try RSSSkipHours(hour: Array(-5...5)) }.to(throwError())
+                }
+            }
+        }
+        
         describe("Deserialization") {
 
             context("WithFullItem") {
@@ -46,32 +70,10 @@ class RSSSkipHoursTests: QuickSpec {
                 }
             }
         }
-
-        describe("Initialization") {
-
-            context("WithValidInput") {
-                it("Succeeds") {
-                    expect { try RSSSkipHours(hour: Array(0...23)) }.toNot(throwError())
-                    expect { try RSSSkipHours(hour: []) }.toNot(throwError())
-                    expect { try RSSSkipHours(hour: []) }.toNot(throwError())
-                }
-                it("Matches") {
-                    expect(try? RSSSkipHours(hour: Array(0...23)).hour) == Array(0...23)
-                    expect(try? RSSSkipHours(hour: [1]).hour) == [1]
-                    expect(try? RSSSkipHours(hour: []).hour) == []
-                }
-            }
-
-            context("WithInvalidInput") {
-                it("Fails") {
-                    expect { try RSSSkipHours(hour: Array(0...24)) }.to(throwError())
-                    expect { try RSSSkipHours(hour: Array(-5...5)) }.to(throwError())
-                }
-            }
-        }
     }
 }
 
+// Putting these outside of the class so it's not necessary to use `self`
 private let fullTestXML = """
     <skipHours>
         <hour>0</hour>
