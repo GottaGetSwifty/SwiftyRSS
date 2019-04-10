@@ -16,7 +16,6 @@ import SWXMLHash
 private let config = SWXMLHash.config { (_) in }
 private let elementName = "skipDays"
 
-//swiftlint:disable line_length
 class RSSSkipDaysTests: QuickSpec {
 
     override func spec() {
@@ -75,8 +74,6 @@ class RSSSkipDaysTests: QuickSpec {
         }
     }
 }
-
-//swiftlint:enable line_length
 
 private let fullTestXML = """
     <skipDays>

@@ -41,7 +41,7 @@ class RSSSkipHoursTests: QuickSpec {
                 }
             }
         }
-        
+
         describe("Deserialization") {
 
             context("WithFullItem") {

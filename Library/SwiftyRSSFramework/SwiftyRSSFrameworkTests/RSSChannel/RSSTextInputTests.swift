@@ -14,7 +14,7 @@ import SWXMLHash
 
 // Putting these outside of the class so it's not necessary to use `self`
 private let config = SWXMLHash.config { (_) in }
-private let elementName = "textinput"
+private let elementName = "textInput"
 
 class RSSTextInputTests: QuickSpec {
 
@@ -85,47 +85,47 @@ private let fullItem = RSSTextInput(title: "Search",
                                     link: URL(string: "http://www.google.com/search?")!)
 
 private let fullTestXML = """
-    <textinput>
+    <textInput>
         <title>Search</title>
         <description>Search Google</description>
         <name>q</name>
         <link>http://www.google.com/search?</link>
-    </textinput>
+    </textInput>
     """
 
 private let missingTitleTestXML = """
-    <textinput>
+    <textInput>
         <description>Search Google</description>
         <name>q</name>
         <link>http://www.google.com/search?</link>
-    </textinput>
+    </textInput>
     """
 
 private let missingDescriptionTestXML = """
-    <textinput>
+    <textInput>
         <title>Search</title>
         <name>q</name>
         <link>http://www.google.com/search?</link>
-    </textinput>
+    </textInput>
     """
 
 private let missingNameTestXML = """
-    <textinput>
+    <textInput
         <title>Search</title>
         <description>Search Google</description>
         <link>http://www.google.com/search?</link>
-    </textinput>
+    </textInput>
     """
 
 private let missingLinkTestXML = """
-    <textinput>
+    <textInput>
         <title>Search</title>
         <description>Search Google</description>
         <name>q</name>
-    </textinput>
+    </textInput>
     """
 
 private let missingItemsXML = """
-    <textinput>
-    </textinput>
+    <textInput>
+    </textInput>
     """
