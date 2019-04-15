@@ -145,6 +145,7 @@ private let fullItem = RSSChannel(title: "Test Channel",
                                                           link: URL(string: "http://www.google.com/search?")!),
                                   skipHours: try! RSSSkipHours(hour: Array(0...23)),
                                   skipDays: RSSSkipDays(day: Set(RSSSkipDay.allCases)))
+
 //swiftlint:enable force_try
 
 private let fullTestXML = """
@@ -223,7 +224,7 @@ private let onlyRequiredItem = RSSChannel(title: "Test Channel",
                                           language: nil, copyright: nil, managingEditor: nil, webMaster: nil,
                                           pubDate: nil, lastBuildDate: nil, category: [], generator: nil,
                                           docs: nil, cloud: nil, ttl: nil, image: nil, rating: nil, textInput: nil,
-                                          skipHours: nil, skipDays: nil  )
+                                          skipHours: nil, skipDays: nil)
 
 private let onlyRequiredItemsTestXML = """
 <channel>

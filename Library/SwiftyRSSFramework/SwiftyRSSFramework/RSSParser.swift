@@ -9,71 +9,56 @@
 import Foundation
 import SWXMLHash
 
-struct RSSFeed<ChannelType: XMLIndexerDeserializable, ItemType: XMLIndexerDeserializable> {
+typealias StandardRSSFeed = RSSFeed<RSSChannel, RSSItem>
+typealias StandardRSSParser = RSSParser<RSSChannel, RSSItem>
+
+typealias RSSAble = XMLIndexerDeserializable & Codable & Equatable
+
+struct RSSFeed<ChannelType: RSSAble, ItemType: RSSAble>: RSSAble {
+
     let channel: ChannelType
-    let items: [ItemType]
+    let item: [ItemType]
+
+    static func deserialize(_ element: XMLIndexer) throws -> RSSFeed<ChannelType, ItemType> {
+        return RSSFeed(channel: try element[CodingKeys.channel].value(),
+                       item: element[CodingKeys.channel][CodingKeys.item].all.compactMap { try? $0.value() })
+    }
 }
 
-class RSSParser<ChannelType: XMLIndexerDeserializable, ItemType: XMLIndexerDeserializable> {
-
-    enum Keys: String {
-        case rss
-        case channel
-        case item
-    }
-
+class RSSParser<ChannelType: RSSAble, ItemType: RSSAble> {
+    typealias RSSFeedType = RSSFeed<ChannelType, ItemType>
     private init() {}
 
     //Runs in background thread and calls completion on the main thread
-    class func parse(data: Data, completion: @escaping ([RSSFeed<ChannelType, ItemType>]) -> ()) {
+    class func parse(data: Data, completion: @escaping (Result<RSSFeedType, Error>) -> ()) {
         parse(data: data, completionQueue: DispatchQueue.main, completion: completion)
     }
 
     //Runs in background thread and calls completion on the passed Queue
     class func parse(data: Data, completionQueue: DispatchQueue,
-                     completion: @escaping ([RSSFeed<ChannelType, ItemType>]) -> ()) {
+                     completion: @escaping (Result<RSSFeedType, Error>) -> ()) {
+
         DispatchQueue.global().async {
-            let indexer = SWXMLHash.config { (_) in }.parse(data)
-            let channels = makeChannels(indexer)
-            completionQueue.async {
-                completion(channels)
-            }
+            let result = parseSynchronously(data: data)
+            completionQueue.async { completion(result) }
         }
     }
 
     //Runs in background thread and calls completion on the passed Queue
-    class func parseSynchronously(data: Data) -> [RSSFeed<ChannelType, ItemType>] {
+    class func parseSynchronously(data: Data) -> Result<RSSFeedType, Error> {
 
         let indexer = SWXMLHash.config { (_) in }.parse(data)
-        let channels = makeChannels(indexer)
-        return channels
-    }
-
-    class func makeChannels(_ node: XMLIndexer) -> [RSSFeed<ChannelType, ItemType>] {
-        let channels = node[Keys.rss][Keys.channel].all.compactMap(parseChannel)
-        return channels
-    }
-
-    private class func parseChannel(_ channelNode: XMLIndexer) -> RSSFeed<ChannelType, ItemType>? {
         do {
-            let channel: ChannelType = try channelNode.value()
-
-            //Manually mapping here because we don't want to whole parse to fail if one item is broken.
-            let items: [ItemType] = channelNode[Keys.item].all.compactMap {
-                do {
-                    let item: ItemType = try $0.value()
-                    return item
-                } catch let error {
-                    print(error.localizedDescription)
-                    return nil
-                }
-            }
-
-            let rssChannel = RSSFeed<ChannelType, ItemType>(channel: channel, items: items)
-            return rssChannel
-        } catch let error {
-            print(error.localizedDescription)
-            return nil
+            let channels = try makeChannel(indexer)
+            return Result.success(channels)
         }
+        catch let error {
+            return Result.failure(error)
+        }
+    }
+
+    class func makeChannel(_ node: XMLIndexer) throws -> RSSFeedType {
+        let channel = try RSSFeed<ChannelType, ItemType>.deserialize(node)
+        return channel
     }
 }

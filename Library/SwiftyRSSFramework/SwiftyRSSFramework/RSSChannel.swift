@@ -29,7 +29,7 @@ public struct RSSSkipHours: Equatable, Codable, XMLIndexerDeserializable {
     }
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSSkipHours {
-        return try RSSSkipHours(hour: element[CodingKeys.hour.stringValue].all.compactMap { try? $0.value() })
+        return try RSSSkipHours(hour: element[CodingKeys.hour].all.compactMap { try? $0.value() })
     }
 
     enum RSSSkipHoursError: Error, CustomStringConvertible {
@@ -62,7 +62,7 @@ public struct RSSSkipDays: Codable, Equatable, XMLIndexerDeserializable {
     var day: Set<RSSSkipDay>
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSSkipDays {
-        return RSSSkipDays(day: Set(element[CodingKeys.day.stringValue].all.compactMap {
+        return RSSSkipDays(day: Set(element[CodingKeys.day].all.compactMap {
             guard  let skipDay = try? RSSSkipDay(rawValue: $0.value()) else {
                 print("Invalid skip day: \($0.description)")
                 return nil
@@ -98,12 +98,12 @@ public struct RSSImage: Codable, Equatable, XMLIndexerDeserializable {
     let description: String?
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSImage {
-        return RSSImage(url: try element[CodingKeys.url.stringValue].value(),
-                        title: try element[CodingKeys.title.stringValue].value(),
-                        link: try element[CodingKeys.link.stringValue].value(),
-                        width: try? element[CodingKeys.width.stringValue].value(),
-                        height: try? element[CodingKeys.height.stringValue].value(),
-                        description: try? element[CodingKeys.description.stringValue].value())
+        return RSSImage(url: try element[CodingKeys.url].value(),
+                        title: try element[CodingKeys.title].value(),
+                        link: try element[CodingKeys.link].value(),
+                        width: try? element[CodingKeys.width].value(),
+                        height: try? element[CodingKeys.height].value(),
+                        description: try? element[CodingKeys.description].value())
     }
 }
 
@@ -189,10 +189,10 @@ public struct RSSTextInput: Codable, Equatable, XMLIndexerDeserializable {
     let link: URL
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSTextInput {
-        return RSSTextInput(title: try element[CodingKeys.title.stringValue].value(),
-                            description: try element[CodingKeys.description.stringValue].value(),
-                            name: try element[CodingKeys.name.stringValue].value(),
-                            link: try element[CodingKeys.link.stringValue].value())
+        return RSSTextInput(title: try element[CodingKeys.title].value(),
+                            description: try element[CodingKeys.description].value(),
+                            name: try element[CodingKeys.name].value(),
+                            link: try element[CodingKeys.link].value())
     }
 }
 
@@ -249,25 +249,25 @@ public struct RSSChannel: Codable, Equatable, XMLIndexerDeserializable {
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSChannel {
 
-        return RSSChannel(title: try element[CodingKeys.title.stringValue].value(),
-                          link: try element[CodingKeys.link.stringValue].value(),
-                          description: try element[CodingKeys.description.stringValue].value(),
-                          language: try? element[CodingKeys.language.stringValue].value(),
-                          copyright: try? element[CodingKeys.copyright.stringValue].value(),
-                          managingEditor: try? element[CodingKeys.managingEditor.stringValue].value(),
-                          webMaster: try? element[CodingKeys.webMaster.stringValue].value(),
-                          pubDate: try? element[CodingKeys.pubDate.stringValue].value(),
-                          lastBuildDate: try? element[CodingKeys.lastBuildDate.stringValue].value(),
-                          category: element[CodingKeys.category.stringValue].all.compactMap { try? $0.value() },
-                          generator: try? element[CodingKeys.generator.stringValue].value(),
-                          docs: try? element[CodingKeys.docs.stringValue].value(),
-                          cloud: try? element[CodingKeys.cloud.stringValue].value(),
-                          ttl: try? element[CodingKeys.ttl.stringValue].value(),
-                          image: try? element[CodingKeys.image.stringValue].value(),
-                          rating: try? element[CodingKeys.rating.stringValue].value(),
-                          textInput: try? element[CodingKeys.textInput.stringValue].value(),
-                          skipHours: try? element[CodingKeys.skipHours.stringValue].value(),
-                          skipDays: try? element[CodingKeys.skipDays.stringValue].value())
+        return RSSChannel(title: try element[CodingKeys.title].value(),
+                          link: try element[CodingKeys.link].value(),
+                          description: try element[CodingKeys.description].value(),
+                          language: try? element[CodingKeys.language].value(),
+                          copyright: try? element[CodingKeys.copyright].value(),
+                          managingEditor: try? element[CodingKeys.managingEditor].value(),
+                          webMaster: try? element[CodingKeys.webMaster].value(),
+                          pubDate: try? element[CodingKeys.pubDate].value(),
+                          lastBuildDate: try? element[CodingKeys.lastBuildDate].value(),
+                          category: element[CodingKeys.category].all.compactMap { try? $0.value() },
+                          generator: try? element[CodingKeys.generator].value(),
+                          docs: try? element[CodingKeys.docs].value(),
+                          cloud: try? element[CodingKeys.cloud].value(),
+                          ttl: try? element[CodingKeys.ttl].value(),
+                          image: try? element[CodingKeys.image].value(),
+                          rating: try? element[CodingKeys.rating].value(),
+                          textInput: try? element[CodingKeys.textInput].value(),
+                          skipHours: try? element[CodingKeys.skipHours].value(),
+                          skipDays: try? element[CodingKeys.skipDays].value())
     }
 }
 

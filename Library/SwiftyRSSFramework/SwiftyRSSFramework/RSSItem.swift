@@ -46,16 +46,16 @@ public struct RSSItem: Codable, Equatable, XMLIndexerDeserializable {
     let source: RSSSource?
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSItem {
-        return RSSItem(title: try? element[CodingKeys.title.stringValue].value(),
-                       link: try? element[CodingKeys.link.stringValue].value(),
-                       description: try? element[CodingKeys.description.stringValue].value(),
-                       author: try? element[CodingKeys.author.stringValue].value(),
-                       category: element[CodingKeys.category.stringValue].all.compactMap { try? $0.value() },
-                       comments: try? element[CodingKeys.comments.stringValue].value(),
-                       enclosure: try? element[CodingKeys.enclosure.stringValue].value(),
-                       guid: try? element[CodingKeys.guid.stringValue].value(),
-                       pubDate: try? element[CodingKeys.pubDate.stringValue].value(),
-                       source: try? element[CodingKeys.source.stringValue].value())
+        return RSSItem(title: try? element[CodingKeys.title].value(),
+                       link: try? element[CodingKeys.link].value(),
+                       description: try? element[CodingKeys.description].value(),
+                       author: try? element[CodingKeys.author].value(),
+                       category: element[CodingKeys.category].all.compactMap { try? $0.value() },
+                       comments: try? element[CodingKeys.comments].value(),
+                       enclosure: try? element[CodingKeys.enclosure].value(),
+                       guid: try? element[CodingKeys.guid].value(),
+                       pubDate: try? element[CodingKeys.pubDate].value(),
+                       source: try? element[CodingKeys.source].value())
     }
 }
 
@@ -73,9 +73,9 @@ public struct RSSEnclosure: Codable, Equatable, XMLIndexerDeserializable {
     let type: String
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSEnclosure {
-        return RSSEnclosure(url: try element.value(ofAttribute: CodingKeys.url.stringValue),
-                            length: try element.value(ofAttribute:CodingKeys.length.stringValue),
-                            type: try element.value(ofAttribute:CodingKeys.type.stringValue))
+        return RSSEnclosure(url: try element.value(ofAttribute: CodingKeys.url),
+                            length: try element.value(ofAttribute:CodingKeys.length),
+                            type: try element.value(ofAttribute:CodingKeys.type))
     }
 }
 
