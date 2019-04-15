@@ -1,2 +1,2 @@
 # SwiftyRSS
-Simple, Constrained RSS reader written in Swift
+Simple, Constrained RSS Parser written in Swift
