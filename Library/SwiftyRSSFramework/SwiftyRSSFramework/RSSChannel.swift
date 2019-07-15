@@ -29,7 +29,7 @@ public struct RSSSkipHours: Equatable, Codable, XMLIndexerDeserializable {
     }
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSSkipHours {
-        return try RSSSkipHours(hour: element[CodingKeys.hour].all.compactMap { try? $0.value() })
+        return try RSSSkipHours(hour: element[CodingKeys.hour].value())
     }
 
     enum RSSSkipHoursError: Error, CustomStringConvertible {
@@ -119,21 +119,26 @@ public struct RSSCategory: Codable, Equatable, XMLElementDeserializable {
     // Optional Elements
 
     /// A string that identifies a categorization taxonomy.
-    let domain: URL?
+    @XMLAttributeOptionalProperty
+    var domain: URL?
 
     /// Throwing initializer to ensure it's not initialized without a value
-    init(value: String, domain: URL?) throws {
+    init(value: String, domain: XMLAttributeOptionalProperty<URL>?) throws {
         guard !value.isEmpty else {
             throw RSSSkipHoursError.missingValue
         }
+        $domain = domain ?? XMLAttributeOptionalProperty(value: nil)
         self.value = value
-        self.domain = domain
+    }
+
+    init(value: String, rawDomain: URL?) throws {
+        try self.init(value: value, domain: XMLAttributeOptionalProperty(value: rawDomain))
     }
 
     public static func deserialize(_ element: XMLElement) throws -> RSSCategory {
 
         return try RSSCategory(value: element.text,
-                               domain: element.value(ofAttribute: CodingKeys.domain))
+                               domain: element.value(of: CodingKeys.domain))
     }
 
     enum RSSSkipHoursError: Error, CustomStringConvertible {
@@ -156,23 +161,44 @@ public struct RSSCategory: Codable, Equatable, XMLElementDeserializable {
 public struct RSSCloud: Codable, Equatable, XMLElementDeserializable {
 
     /// The domain name or IP address of the cloud
-    let domain: String
+    @XMLAttributeProperty
+    var domain: String
     /// The TCP port on which the cloud is running
-    let port: String
+    @XMLAttributeProperty
+    var port: String
     /// The location of its responder
-    let path: String
+    @XMLAttributeProperty
+    var path: String
     /// The name of the procedure to call to request notification
-    let registerProcedure: String
+    @XMLAttributeProperty
+    var registerProcedure: String
     /// xml-rpc, soap or http-post (case-sensitive), indicating which protocol is to be used.
-    let `protocol`: String
+    @XMLAttributeProperty
+    var `protocol`: String
+
+    init(domain: XMLAttributeProperty<String>, port: XMLAttributeProperty<String>, path: XMLAttributeProperty<String>, registerProcedure: XMLAttributeProperty<String>, `protocol`: XMLAttributeProperty<String>) {
+        $domain = domain
+        $port = port
+        $path = path
+        $registerProcedure = registerProcedure
+        $protocol = `protocol`
+    }
+
+    init(rawDomain domain: String, rawPort port: String, rawPath path: String, rawRegisterProcedure registerProcedure: String, rawProtocol `protocol`: String) {
+        self.init(domain: XMLAttributeProperty(value: domain),
+                  port: XMLAttributeProperty(value: port),
+                  path: XMLAttributeProperty(value: path),
+                  registerProcedure: XMLAttributeProperty(value: registerProcedure),
+                  protocol: XMLAttributeProperty(value: `protocol`))
+    }
 
     public static func deserialize(_ element: XMLElement) throws -> RSSCloud {
 
-        return try RSSCloud(domain: element.value(ofAttribute: CodingKeys.domain),
-                            port: element.value(ofAttribute: CodingKeys.port),
-                            path: element.value(ofAttribute: CodingKeys.path),
-                            registerProcedure: element.value(ofAttribute: CodingKeys.registerProcedure),
-                            protocol: element.value(ofAttribute: CodingKeys.protocol))
+        return try RSSCloud(domain: element.value(of: CodingKeys.domain),
+                            port: element.value(of: CodingKeys.port),
+                            path: element.value(of: CodingKeys.path),
+                            registerProcedure: element.value(of: CodingKeys.registerProcedure),
+                            protocol: element.value(of: CodingKeys.protocol))
     }
 }
 
@@ -258,7 +284,7 @@ public struct RSSChannel: Codable, Equatable, XMLIndexerDeserializable {
                           webMaster: try? element[CodingKeys.webMaster].value(),
                           pubDate: try? element[CodingKeys.pubDate].value(),
                           lastBuildDate: try? element[CodingKeys.lastBuildDate].value(),
-                          category: element[CodingKeys.category].all.compactMap { try? $0.value() },
+                          category: (try? element[CodingKeys.category].value()) ?? [],
                           generator: try? element[CodingKeys.generator].value(),
                           docs: try? element[CodingKeys.docs].value(),
                           cloud: try? element[CodingKeys.cloud].value(),

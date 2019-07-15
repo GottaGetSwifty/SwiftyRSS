@@ -28,11 +28,11 @@ class RSSSourceTests: QuickSpec {
                 context("WithValidInput") {
                     it("Succeeds") {
                         expect { try RSSSource(value: "Tomalak's Realm",
-                                               url: URL(string:"http://www.tomalak.org/links2.xml")!) }.toNot(throwError())
+                                               rawURL: URL(string:"http://www.tomalak.org/links2.xml")!) }.toNot(throwError())
                     }
                     it("Matches") {
                         expect(try?  RSSSource(value: "Tomalak's Realm",
-                                         url: URL(string:"http://www.tomalak.org/links2.xml")!)
+                                               rawURL: URL(string:"http://www.tomalak.org/links2.xml")!)
                             ) == fullItem
                     }
                 }
@@ -40,7 +40,7 @@ class RSSSourceTests: QuickSpec {
                 context("WithInvalidInput") {
                     it("Fails") {
                         expect { try RSSSource(value: "",
-                                               url: URL(string:"http://www.tomalak.org/links2.xml")!) }.to(throwError())
+                                               rawURL: URL(string:"http://www.tomalak.org/links2.xml")!) }.to(throwError())
                     }
                 }
             }
@@ -75,7 +75,7 @@ class RSSSourceTests: QuickSpec {
 }
 //swiftlint:disable force_try
 private let fullItem = try! RSSSource(value: "Tomalak's Realm",
-                                      url: URL(string:"http://www.tomalak.org/links2.xml")!)
+                                      rawURL: URL(string:"http://www.tomalak.org/links2.xml")!)
 //swiftlint:enable force_try
 
 private let fullTestXML = """

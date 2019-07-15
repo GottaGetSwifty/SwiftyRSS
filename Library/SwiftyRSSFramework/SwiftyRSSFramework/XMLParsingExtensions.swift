@@ -12,13 +12,13 @@ import SWXMLHash
 /// Allows interaction using CodingKeys
 internal extension XMLElement {
 
-    func value<T: XMLAttributeDeserializable, A: CodingKey>(ofAttribute attr: A) throws -> T {
-        return try value(ofAttribute: attr.stringValue)
-    }
-
-    func value<T: XMLAttributeDeserializable, A: CodingKey>(ofAttribute attr: A) -> T? {
-        return value(ofAttribute: attr.stringValue)
-    }
+//    func value<T: XMLAttributeDeserializable, A: CodingKey>(ofAttribute attr: A) throws -> T {
+//        return try value(ofAttribute: attr)
+//    }
+//
+//    func value<T: XMLAttributeDeserializable, A: CodingKey>(ofAttribute attr: A) -> T? {
+//        return value(ofAttribute: attr)
+//    }
 }
 
 /// Allows interaction using CodingKeys
@@ -41,7 +41,7 @@ internal extension XMLIndexer {
      - throws: an XMLDeserializationError if there is a problem with deserialization
      - returns: The deserialized `T` value
      */
-    func value<A: CodingKey, T: XMLAttributeDeserializable>(ofAttribute attr: A) throws -> T {
-        return try value(ofAttribute: attr.stringValue)
-    }
+//    func value<A: CodingKey, T: XMLAttributeDeserializable>(ofAttribute attr: A) throws -> T {
+//        return try value(ofAttribute: attr)
+//    }
 }

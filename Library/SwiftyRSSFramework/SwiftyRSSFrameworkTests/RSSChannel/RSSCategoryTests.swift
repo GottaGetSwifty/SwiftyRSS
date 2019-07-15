@@ -25,18 +25,18 @@ class RSSCategoryTests: QuickSpec {
 
             context("WithValidInput") {
                 it("Succeeds") {
-                    expect { try RSSCategory(value: "Duck Duck Go", domain: URL(string: "http://www.ddg.com")!)}.toNot(throwError())
+                    expect { try RSSCategory(value: "Duck Duck Go", rawDomain: URL(string: "http://www.ddg.com")!)}.toNot(throwError())
                     expect { try RSSCategory(value: "DDG", domain: nil)}.toNot(throwError())
                 }
                 it("Matches") {
-                    expect { try RSSCategory(value: "Duck Duck Go", domain: URL(string: "http://www.ddg.com")!)} == fullItem
+                    expect { try RSSCategory(value: "Duck Duck Go", rawDomain: URL(string: "http://www.ddg.com")!)} == fullItem
                     expect { try RSSCategory(value: "DDG", domain: nil)} == noURLItem
                 }
             }
 
             context("WithInvalidInput") {
                 it("Fails") {
-                    expect { try RSSCategory(value: "", domain: URL(string: "http://www.ddg.com")!) }.to(throwError())
+                    expect { try RSSCategory(value: "", rawDomain: URL(string: "http://www.ddg.com")!) }.to(throwError())
                     expect { try RSSCategory(value: "", domain: nil) }.to(throwError())
                 }
             }
@@ -76,7 +76,7 @@ class RSSCategoryTests: QuickSpec {
 }
 
 //swiftlint:disable force_try
-private let fullItem = try! RSSCategory(value: "Duck Duck Go", domain: URL(string: "http://www.ddg.com")!)
+private let fullItem = try! RSSCategory(value: "Duck Duck Go", rawDomain: URL(string: "http://www.ddg.com")!)
 //swiftlint:enable force_try
 
 private let fullTestXML = """

@@ -75,7 +75,7 @@ class RSSCloudTests: QuickSpec {
     }
 }
 
-private let fullItem = RSSCloud(domain: "radio.xmlstoragesystem.com", port: "80", path: "/RPC2", registerProcedure: "xmlStorageSystem.rssPleaseNotify", protocol: "xml-rpc")
+private let fullItem = RSSCloud(rawDomain: "radio.xmlstoragesystem.com", rawPort: "80", rawPath: "/RPC2", rawRegisterProcedure: "xmlStorageSystem.rssPleaseNotify", rawProtocol: "xml-rpc")
 
 private let fullTestXML = """
     <cloud domain="radio.xmlstoragesystem.com" port="80" path="/RPC2" registerProcedure="xmlStorageSystem.rssPleaseNotify" protocol="xml-rpc" />

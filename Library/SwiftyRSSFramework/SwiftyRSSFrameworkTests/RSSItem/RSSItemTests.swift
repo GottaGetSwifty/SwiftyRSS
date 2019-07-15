@@ -83,14 +83,14 @@ private let fullItem = RSSItem(title: "RSS Item Title",
                                author: "The Author",
                                category: [
                                 try! RSSCategory(value: "Duck Duck Go",
-                                                 domain: URL(string: "http://www.ddg.com")!)],
+                                                 rawDomain: URL(string: "http://www.ddg.com")!)],
                                comments: URL(string: "http://www.ddg.com"),
-                               enclosure: RSSEnclosure(url: URL(string:  "http://www.scripting.com/mp3s/weatherReportSuite.mp3")!,
-                                                       length: 12216320, type: "audio/mpeg"),
+                               enclosure: RSSEnclosure(rawURL: URL(string:  "http://www.scripting.com/mp3s/weatherReportSuite.mp3")!,
+                                                       rawLength: 12216320, rawType: "audio/mpeg"),
                                guid: "AGuid",
                                pubDate: Date(timeIntervalSince1970: 1031356801),
                                source: try! RSSSource(value: "Tomalak's Realm",
-                                                 url: URL(string: "http://www.tomalak.org/links2.xml")!))
+                                                      rawURL: URL(string: "http://www.tomalak.org/links2.xml")!))
 //swiftlint:enable force_try
 
 private let fullTestXML = """

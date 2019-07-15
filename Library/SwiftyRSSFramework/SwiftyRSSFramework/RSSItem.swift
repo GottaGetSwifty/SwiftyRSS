@@ -50,7 +50,7 @@ public struct RSSItem: Codable, Equatable, XMLIndexerDeserializable {
                        link: try? element[CodingKeys.link].value(),
                        description: try? element[CodingKeys.description].value(),
                        author: try? element[CodingKeys.author].value(),
-                       category: element[CodingKeys.category].all.compactMap { try? $0.value() },
+                       category: (try? element[CodingKeys.category].value()) ?? [],
                        comments: try? element[CodingKeys.comments].value(),
                        enclosure: try? element[CodingKeys.enclosure].value(),
                        guid: try? element[CodingKeys.guid].value(),
@@ -66,16 +66,29 @@ public struct RSSItem: Codable, Equatable, XMLIndexerDeserializable {
 public struct RSSEnclosure: Codable, Equatable, XMLIndexerDeserializable {
 
     /// Where the enclosure is located
-    let url: URL
+    @XMLAttributeProperty
+    var url: URL
     /// How big it is in bytes
-    let length: Float
+    @XMLAttributeProperty
+    var length: Float
     /// What its type is, a standard MIME type. Must be an http url.
-    let type: String
+    @XMLAttributeProperty
+    var type: String
+
+    init(url: XMLAttributeProperty<URL>, length: XMLAttributeProperty<Float>, type: XMLAttributeProperty<String>) {
+        $url = url
+        $length = length
+        $type = type
+    }
+
+    init(rawURL url: URL, rawLength length: Float, rawType type: String) {
+        self.init(url: XMLAttributeProperty(value: url), length: XMLAttributeProperty(value: length), type: XMLAttributeProperty(value: type))
+    }
 
     public static func deserialize(_ element: XMLIndexer) throws -> RSSEnclosure {
-        return RSSEnclosure(url: try element.value(ofAttribute: CodingKeys.url),
-                            length: try element.value(ofAttribute:CodingKeys.length),
-                            type: try element.value(ofAttribute:CodingKeys.type))
+        return RSSEnclosure(url: try element.value(of: CodingKeys.url),
+                            length: try element.value(of: CodingKeys.length),
+                            type: try element.value(of: CodingKeys.type))
     }
 }
 
@@ -85,22 +98,30 @@ public struct RSSEnclosure: Codable, Equatable, XMLIndexerDeserializable {
 public struct RSSSource: Codable, Equatable, XMLElementDeserializable {
 
     let value: String
-    let url: URL
 
-    /// Throwing initializer to ensure it's not initialized without a value
-    init(value: String, url: URL) throws {
+    @XMLAttributeProperty
+    var url: URL
+
+    init(value: String, url: XMLAttributeProperty<URL>) throws {
         guard !value.isEmpty else {
             throw RSSSourceError.missingValue
         }
+        $url = url
         self.value = value
-        self.url = url
+    }
+
+    /// Throwing initializer to ensure it's not initialized without a value
+    init(value: String, rawURL theURL: URL) throws {
+        try self.init(value: value, url: XMLAttributeProperty(value: theURL))
     }
 
     public static func deserialize(_ element: XMLElement) throws -> RSSSource {
-
         return try RSSSource(value: element.text,
-                               url: element.value(ofAttribute: CodingKeys.url))
+                             url: element.value(of: CodingKeys.url))
     }
+//    init(from decoder: Decoder) {
+//
+//    }
 
     enum RSSSourceError: Error, CustomStringConvertible {
         case missingValue
@@ -111,7 +132,37 @@ public struct RSSSource: Codable, Equatable, XMLElementDeserializable {
             }
         }
     }
-
 }
+
+//extension XMLElement {
+//    func value<T>(attributeName: String) throws -> XMLAttributeWrapper<T> {
+//            return try value(ofAttribute: attribute)
+//    }
+//}
+
+//typealias XMLThing = Equatable & Codable & XMLAttributeDeserializable
+//@propertyWrapper
+//struct XMLAttributeWrapper<T: XMLThing>: XMLThing {
+//
+//    let value: T
+//    init(value: T) {
+//        self.value = value
+//    }
+//    var wrappedValue: T {
+//        return value
+//    }
+//
+//    static func deserialize(_ attribute: XMLAttribute) throws -> XMLAttributeWrapper<T> {
+//        let result = try XMLAttributeWrapper(value: T.deserialize(attribute))
+//        print(result)
+//        return result
+//    }
+//}
+//
+//extension XMLElement {
+//    func value<PathEnd>(_ key: String) throws -> XMLAttributeWrapper<PathEnd> {
+//        return try value(ofAttribute: key)
+//    }
+//}
 
 //swiftlint:enable line_length

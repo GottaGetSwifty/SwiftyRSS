@@ -127,11 +127,11 @@ private let fullItem = StandardRSSFeed(
                        webMaster: "Someone Else",
                        pubDate: Date(timeIntervalSince1970: 1031356801),
                        lastBuildDate: Date(timeIntervalSince1970: 1031356802),
-                       category: [try! RSSCategory(value: "Duck Duck Go", domain: URL(string: "http://www.ddg.com")!),
-                                  try! RSSCategory(value: "Google", domain: URL(string: "http://www.google.com")!)],
+                       category: [try! RSSCategory(value: "Duck Duck Go", rawDomain: URL(string: "http://www.ddg.com")!),
+                                  try! RSSCategory(value: "Google", rawDomain: URL(string: "http://www.google.com")!)],
                        generator: "A Generator",
                        docs: URL(string: "https://www.bing.com")!,
-                       cloud: RSSCloud(domain: "radio.xmlstoragesystem.com", port: "80", path: "/RPC2", registerProcedure: "xmlStorageSystem.rssPleaseNotify", protocol: "xml-rpc"),
+                       cloud: RSSCloud(rawDomain: "radio.xmlstoragesystem.com", rawPort: "80", rawPath: "/RPC2", rawRegisterProcedure: "xmlStorageSystem.rssPleaseNotify", rawProtocol: "xml-rpc"),
                        ttl: 60,
                        image: RSSImage(url: URL(string: "https://upload.wikimedia.org/wikipedia/fi/8/88/DuckDuckGo_logo.svg")!,
                                        title: "Duck Duck Go", link: URL(string: "https://www.ddg.com")!,
@@ -151,13 +151,13 @@ private let fullItem = StandardRSSFeed(
                 author: "The Author",
                 category: [
                 try! RSSCategory(value: "Duck Duck Go",
-                                 domain: URL(string: "http://www.ddg.com")!)],
+                                 rawDomain: URL(string: "http://www.ddg.com")!)],
                 comments: URL(string: "http://www.ddg.com"),
-                enclosure: RSSEnclosure(url: URL(string:  "http://www.scripting.com/mp3s/weatherReportSuite.mp3")!,
-                                       length: 12216320, type: "audio/mpeg"),
+                enclosure: RSSEnclosure(rawURL: URL(string:  "http://www.scripting.com/mp3s/weatherReportSuite.mp3")!,
+                                       rawLength: 12216320, rawType: "audio/mpeg"),
                 guid: "AGuid",
                 pubDate: Date(timeIntervalSince1970: 1031356801),
-                source: try! RSSSource(value: "Tomalak's Realm", url: URL(string: "http://www.tomalak.org/links2.xml")!))
+                source: try! RSSSource(value: "Tomalak's Realm", rawURL: URL(string: "http://www.tomalak.org/links2.xml")!))
     ])
 
 //swiftlint:enable force_try

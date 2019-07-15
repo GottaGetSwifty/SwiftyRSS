@@ -64,7 +64,7 @@ class RSSEnclosureTests: QuickSpec {
     }
 }
 
-private let fullItem = RSSEnclosure(url: URL(string: "http://www.scripting.com/mp3s/weatherReportSuite.mp3")!, length: 12216320, type: "audio/mpeg")
+private let fullItem = RSSEnclosure(rawURL: URL(string: "http://www.scripting.com/mp3s/weatherReportSuite.mp3")!, rawLength: 12216320, rawType: "audio/mpeg")
 
 private let fullTestXML = """
     <enclosure url="http://www.scripting.com/mp3s/weatherReportSuite.mp3" length="12216320" type="audio/mpeg" />
